@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detektor blesků se zvukem</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background-color: #1e1e1e;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 400px;
+        }
+        button {
+            background-color: #ff9800;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #f57c00;
+        }
+        #status {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #b0bec5;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>⚡ Detektor blesků</h2>
+        <p>Pro spustění zvukových efektů při úderu blesku klikni na tlačítko níže (prohlížeče blokují autoplay zvuků bez interakce).</p>
+        <button id="startBtn">Aktivovat detektor</button>
+        <div id="status">Stav: Neaktivní</div>
+    </div>
+
+    <!-- Zvukový efekt zadaný ve zdroji -->
+    <audio id="thunderSound" src="blesk.mp3" preload="auto"></audio>
+
+    <script>
+        const startBtn = document.getElementById('startBtn');
+        const thunderSound = document.getElementById('thunderSound');
+        const statusDiv = document.getElementById('status');
+        
+        let isActive = false;
+        let lastLightningTime = null;
+
+        startBtn.addEventListener('click', () => {
+            // Přehráním a okamžitým ztlumením/zastavením odemkneme audio kontext v prohlížeči
+            thunderSound.play().then(() => {
+                thunderSound.pause();
+                thunderSound.currentTime = 0;
+                isActive = true;
+                startBtn.style.display = 'none';
+                statusDiv.textContent = 'Stav: Aktivní (poslouchám blesky...)';
+                
+                // Spustíme pravidelnou kontrolu blesků každých 10 sekund
+                checkLightning();
+                setInterval(checkLightning, 10000);
+            }).catch(e => {
+                alert('Nepodařilo se povolit zvuk: ' + e);
+            });
+        });
+
+        async function checkLightning() {
+            if (!isActive) return;
+
+            try {
+                // Příklad použití veřejné API pro blesky (např. Blitzortung nebo vlastní endpoint)
+                // Zde simulujeme volání meteo dat pro tvou oblast (např. střed Evropy)
+                // Můžeš napojit reálnou API dle výběru
+                
+                statusDiv.textContent = 'Stav: Kontroluji data... ' + new Date().toLocaleTimeString();
+                
+                // Tady by proběhl fetch() na API. Pro ilustraci simulujeme detekci:
+                // let response = await fetch('TVOJE_API_URL');
+                // let data = await response.json();
+                
+                // Pokud API vrátí nový blesk:
+                // if (data.newLightning && data.timestamp !== lastLightningTime) {
+                //     lastLightningTime = data.timestamp;
+                //     thunderSound.currentTime = 0;
+                //     thunderSound.play();
+                // }
+
+            } catch (error) {
+                console.error('Chyba při stahování dat o blescích:', error);
+            }
+        }
+    </script>
+</body>
+</html>
